@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Measure Speed of Light</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: white;
+    user-select: none;
+}
+
+.container {
+    margin-top: 30px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+.light-path {
+    width: 90%;
+    max-width: 600px;
+    height: 10px;
+    background: linear-gradient(to right, #444, #222);
+    border-radius: 5px;
+    position: relative;
+    margin: 30px auto;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+.light {
+    width: 15px;
+    height: 15px;
+    background: yellow;
+    border-radius: 50%;
+    position: absolute;
+    top: -3px;
+    left: 0;
+    box-shadow: 0 0 10px yellow;
+    transition: left 0s linear; /* Ensures smooth movement */
+}
+
+#speedControl {
+    width: 80%;
+    max-width: 400px;
+    margin: 15px 0;
+    appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background: #333;
+    outline: none;
+    opacity: 0.9;
+    transition: 0.3s;
+}
+
+#speedControl:hover {
+    opacity: 1;
+}
+
+/* Custom Thumb (for Chrome, Safari, Edge) */
+#speedControl::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: red;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px red;
+}
+
+/* Custom Thumb (for Firefox) */
+#speedControl::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: red;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 5px red;
+}
+
+#result {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Measure the Speed of Light</h2>
+        <p>Tap anywhere to start or stop the movement.</p>
+
+        <label for="speedControl">Speed (pixels per second): </label>
+        <input type="range" id="speedControl" min="50" max="1000" value="50">
+        <span id="speedValue">50</span> px/s
+
+        <p id="result"></p>
+
+        <div class="light-path" id="path">
+            <div class="light" id="light"></div>
+        </div>
+    </div>
+
+    <script>
+let startTime, endTime, animationFrame;
+let isMoving = false;
+let distance = 299792; // Example distance in km
+let speed = 50; // Default speed in px/s
+const light = document.getElementById("light");
+const path = document.getElementById("path");
+const speedControl = document.getElementById("speedControl");
+const speedValue = document.getElementById("speedValue");
+
+// Update speed instantly when typing or moving slider
+function updateSpeed() {
+    speed = parseInt(speedControl.value) || 50; // Default to 50 if empty
+    speedValue.innerText = speed;
+}
+
+speedControl.addEventListener("input", updateSpeed);  // When moving slider
+speedControl.addEventListener("change", updateSpeed); // When typing
+
+document.body.addEventListener("click", toggleExperiment);
+document.body.addEventListener("touchstart", toggleExperiment);
+
+function toggleExperiment() {
+    if (isMoving) {
+        stopExperiment();
+    } else {
+        startExperiment();
+    }
+}
+
+function startExperiment() {
+    isMoving = true;
+    document.getElementById("result").innerHTML = "Moving...";
+    startTime = performance.now();
+    light.style.left = "0px"; // Reset position
+    moveLight(0); // Start moving instantly
+}
+
+function stopExperiment() {
+    isMoving = false;
+    cancelAnimationFrame(animationFrame);
+    endTime = performance.now();
+    let timeTaken = (endTime - startTime) / 1000; // Convert ms to seconds
+    let measuredSpeed = (distance / timeTaken).toFixed(3);
+    
+    document.getElementById("result").innerHTML = `Measured Speed of Light: ${measuredSpeed} km/s`;
+}
+
+function moveLight(elapsedTime) {
+    if (!isMoving) return; // Stop if movement is toggled off
+
+    let newPosition = elapsedTime * speed; // Speed in px/s
+    let pathWidth = path.clientWidth - light.clientWidth;
+
+    if (newPosition >= pathWidth) {
+        light.style.left = pathWidth + "px";
+        stopExperiment();
+        return;
+    } else {
+        light.style.left = newPosition + "px";
+    }
+
+    animationFrame = requestAnimationFrame((time) => {
+        moveLight((time - startTime) / 1000); // Convert to seconds
+    });
+}
+  
+
+    </script>
+</body>
+</html>
