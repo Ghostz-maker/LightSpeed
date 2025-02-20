@@ -5,9 +5,9 @@ Overview of the Project
 
 ## Technologies Used
 ### Frontend:
-HTML → Structure of the webpage.
-CSS → Styling the elements.
-JavaScript → Controls the logic, animation, and event handling.
-DOM Manipulation → Updates UI dynamically based on user interaction.
-requestAnimationFrame() → Creates smooth animations with optimal performance.
-Performance API (performance.now()) → High-precision time measurement for accurate calculations.
+#### 1. HTML → Structure of the webpage.
+#### 2. CSS → Styling the elements.
+#### 3. JavaScript → Controls the logic, animation, and event handling.
+#### 4. DOM Manipulation → Updates UI dynamically based on user interaction.
+#### 5. requestAnimationFrame() → Creates smooth animations with optimal performance.
+#### 6. Performance API (performance.now()) → High-precision time measurement for accurate calculations.
